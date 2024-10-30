@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex Messenger</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="./assets/logo.png">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="./assets/logo.png" alt="Logo" />
+        </div>
+        <ul class="nav-links">
+            <li><a href="#download">Téléchargement</a></li>
+            <li><a href="#features">Fonctionnalité</a></li>
+            <li><a href="#spec">Spécification Technique</a></li>
+        </ul>
+    </nav>
+    <div id="download">
+        <header id="main-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1 class="main-title">Vortex Messenger</h1>
+                </div>
+                <div class="description-section">
+                    <p class="description">Téléchargement et spécification pour les développeur</p>
+                    <p class="description-text">Vortex Messenger offre des fonctionnalités avancées pour une communication fluide et sécurisée.</p>
+                    <div class="download-button">
+                        <a href="/bin/Vortex%20Messenger%20Installer.dmg" class="download-link">Télécharger la version pour Mac</a>
+                    </div>
+                </div>
+            </div>
+            <div class="login-image-section">
+                <img src="./assets/loginscreen.png" class="login-image" alt="Login Screen" />
+            </div>
+        </header>
+    </div>
+
+    <main id="main-content">
+        <div id="features">
+            <section id="section1" class="features-section">
+                <div class="features-content">
+                    <div class="features-image">
+                        <img src="./assets/settingmpscreen.png" class="features-img" alt="Features Image" />
+                    </div>
+                    <div class="features-list">
+                        <h2 class="features-title">Fonctionnalités récentes</h2>
+                        <div class="feature-item">
+                            <h5 class="feature-title">Réglage de la conversation</h5>
+                            <p class="feature-summary">Permet d'ajuster les paramètres de vos conversations pour une expérience personnalisée.</p>
+                        </div>
+                        <div class="feature-item">
+                            <h5 class="feature-title">Messages éphémères</h5>
+                            <p class="feature-summary">Envoyez des messages temporaires qui disparaissent après un délai défini.</p>
+                        </div>
+                        <div class="feature-item">
+                            <h5 class="feature-title">Accusé de réception</h5>
+                            <p class="feature-summary">Recevez un accusé de réception lorsque vos messages sont envoyés, reçus et lus.</p>
+                        </div>               
+                        <div class="feature-item">
+                            <a href="#" class="specification-link">Voir toute les fonctionnalités</a>
+                        </div>                         
+                    </div>
+                </div>
+            </section>
+        </div>
+    
+        <div id="spec">
+            <section id="section2" class="specifications-section">
+                <h2 class="specifications-title">Spécifications techniques</h2>
+                <div class="specification-grid">
+                    <div class="specification-item">
+                        <h4 class="specification-title">Chiffrement Client-Serveur</h4>
+                        <p>Assure une communication sécurisée entre le client et le serveur grâce à un chiffrement de bout en bout reposant sur des clés AES avec une rotation régulière.</p>
+                        <a href="#" class="specification-link">En savoir plus</a>
+                    </div>
+                    <div class="specification-item">
+                        <h4 class="specification-title">Chiffrement de Messages Client-à-Client</h4>
+                        <p>Garantit la confidentialité des messages échangés entre utilisateurs sans qu'ils soient stockés en clair sur le serveur. Les messages sont chiffrés en AES, puis la clé AES est elle-même chiffrée par une clé RSA côté client.</p>
+                        <a href="#" class="specification-link">En savoir plus</a>
+                    </div>
+                    <div class="specification-item">
+                        <h4 class="specification-title">Authentification</h4>
+                        <p>Utilise des protocoles sécurisés basés sur un mécanisme de challenge-réponse pour vérifier l'identité des utilisateurs et empêcher tout accès non autorisé.</p>
+                        <a href="#" class="specification-link">En savoir plus</a>
+                    </div>
+                    <div class="specification-item">
+                        <h4 class="specification-title">Protocole de Communication</h4>
+                        <p>Repose sur une surcouche TCP, utilisant l'envoi de structures binaires pour assurer une transmission des données à la fois performante et sécurisée.</p>
+                        <a href="#" class="specification-link">En savoir plus</a>
+                    </div>
+                </div>                
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>Design inspirer par <spaan href="https://signal.org/">Signal</span></p>
+        <p>&copy; 2024 Vortex Messenger.</p>
+    </footer>
+</body>
+</html>

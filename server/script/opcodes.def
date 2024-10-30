@@ -1,0 +1,4 @@
+.equ auth, 0x01
+.equ crea, 0x02
+.equ mess, 0x03
+.equ deco, 0x04

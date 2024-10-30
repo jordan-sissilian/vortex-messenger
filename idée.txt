@@ -1,0 +1,223 @@
+
+
+Les commandes sont gerer par des opcode linker a la compilation dans des adresses memoires du binaire pour utiliser un pointeur sur fonction sur l'opcode
+a la compilaition les linker sont :
+	server : opcode, clef symetrique, vertion
+	client : opcode, clef symetrique, vertion, id du client (logiciel)
+
+Les communications du client vers le serveur se font en 2 etape de chiffrement avec la clef public du server puis avec la clef symetrique du server pour les commande, elle seron dans le binaire du client
+Le client accepte que les communication chifrer avec la clef symetrique il dechiffre avec sa clef symetrique puis dechiffre avec sa clef priver
+
+Clé Symétrique  : AES 128
+Clé Asymétrique : RSA 2048 bits
+
+
+Choix des MP et rooms passant par le serveur :
+
+Pour les messages privés (MP), éviter de divulguer les adresses IP des clients.
+Les messages ne sont pas utilisables sur le serveur car ils sont chiffrés avec les clés des clients.
+
+Les communications entre client et serveur se font via des structures de taille fixe, ce qui permet d’utiliser memset pour remplir directement une structure (à déchiffrer avant).
+
+Les commandes sont gérées par des opcodes liés à la compilation à des adresses mémoire du binaire, permettant d'utiliser un pointeur sur fonction basé sur l'opcode.
+Lors de la compilation, les liens sont :
+	Serveur : opcode, clé symétrique, clé privée asymétrique (server), version
+	Client : opcode, clé symétrique, clé publique asymétrique (server), version, ID du client (logiciel)
+
+Les communications du client vers le serveur se font en deux étapes de chiffrement :
+	D'abord avec la clé publique du serveur, puis avec la clé symétrique du serveur pour les commandes, qui sont intégrées dans le binaire du client.
+	Le client n'accepte que les communications chiffrées avec la clé symétrique, qu'il déchiffre avec sa clé symétrique, puis utilise sa clé privée pour un second déchiffrement.
+
+Clés utilisées :
+ 	Clé Symétrique  : AES  128 bits
+	Clé Asymétrique : RSA 2048 bits
+
+structure -> pas exactement comme ca plusieur variante de data en fonction de l'opcode et de la fonction lancée
+struct message vers server :
+{
+	id message (command)
+	command (si mp ou message de room) (opcode)
+	data { message,  uid, user, password, nameRoom, passPhraseClient} (selon les commande struct avec ces differente info)
+	timestamp
+}
+
+struct message vers client :
+{
+	id message (command)
+	command (si mp ou message de room) (opcode)
+	{ status (enum valide, en cours, error, fini) + code (3 chiffre) }
+	data { name, rooms_name, message } (selon les commande struct avec ces differente info)
+	timestamp
+}
+
+
+
+Server:
+
+Sur le lien client-serveur, toutes les communications sont chiffrées symétriquement.
+Le serveur redirige les paquets vers le bon destinataire (UID : identifiant unique) sans déchiffrement.
+Il stocke les utilisateurs dans un dossier avec des privilèges restreints, créant un fichier avec un format spécifique.
+Il garde une queue des actions en cours dans un fichier pour que si le client se déconnecte, elles soient envoyées à la reconnexion.
+
+dossier_users:
+	queu : command
+        file_user: (name)
+        	pubkey
+
+
+memoire user connecte:
+        fingerprint_pubkey
+        ip_address
+             C'est le serveur qui s'occupe de router les messages au bon client
+             Les clients ne communique jamais directement.
+	socket fd ( + savoir si connecter )
+
+
+function:
+	createUserFolder
+	setRegister
+	createUserFile
+	setLogin
+	setPassPhrase
+	setPublicUser
+	disconectUser
+
+	createRoom
+	setFolderRooms
+	setFileRooms
+	setKeySymRoom
+	setUserInRoom
+	checkPasswordRoom
+	joinRoom
+	checkRoom
+	sendMsgRoo
+
+	checkMp
+	joinMp
+	sendMsgMp
+	createQueuMpFile
+	queuMp
+
+Commandes :
+	name func	cmd	opcode
+
+	setRegister 	crea	100001
+	setLogin	auth 	100002
+	setPassPhrase	pass 	100003
+	createRoom	crms	100004
+	joinRoom	jrms 	100005
+	sendMsgRoom	srms 	100006
+	joinMp		jmpu  	100007
+	clientAcceptMp	ampu	100008
+	sendMsgMp	smpu  	100009
+
+Réponses :
+	name func -> to client response
+
+	setRegisterResponse	 	
+	setLoginResponse		
+	setPassPhraseResponse	 	
+	createRoomResponse	 	
+	joinRoomResponse	 	
+	sendMsgRoomsResponse	 	
+	joinMpResponse			
+	clientAcceptMp			
+	sendmsgMpResponse	 	
+
+
+ROOMS: (server)
+Le client se connecte à une room avec son nom et son mot de passe, par exemple : room11 pass2934.
+Les messages sont persistants tant que la room n'est pas supprimée.
+L'historique est stocké sur le serveur de manière chiffrée, avec un maximum de 20 derniers messages.
+
+dossier_channels: (rooms)
+        fichier: (name_room)
+                - uid de toutes les contacts présent.
+                - channel_symetric_key
+		- historique 20 message
+
+Les contacts présents sur un channel sont hébergés sur le serveur.
+Les clients échangent leurs clés publiques.
+Tous les messages du channel (rooms) sont chiffrés avec la clé du channel (symétrique) en plus de celle du serveur, pour une vérification supplémentaire des droits d'accès à la room.
+
+
+Client:
+Sur le lien client-serveur, toutes les communications sont chiffrées symétriquement.
+Le carnet de contacts est hébergé localement sur le client.
+
+À l'inscription, le client choisit trois mots et les envoie au serveur, afin d'assurer que les sessions sont authentiques, en plus du mot de passe (stocké nulle part par la personne qui a créé le compte, en dehors de son PC).
+À chaque connexion, il spécifie son mot de passe; si validé, il doit fournir les mots pour valider la session (cela valide la durée de la session du client connecté).
+
+Il garde une queue des actions en cours dans un fichier pour que si le client se déconnecte, elles soient envoyées à la reconnexion.
+
+Fonctions :
+	register 
+	login 
+	setPassPhrase
+	registerResponse
+	loginResponse
+	passPhraseResponse
+
+	createRoom 
+	joinRoom 
+	sendMsgRoom 
+	createRoomResponse
+	joinRoomResponse
+	sendMsgRoomsResponse
+
+	joinMp
+	sendMsgMp
+	clientAcceptMp
+	joinMpResponse
+	sendmsgMpResponse
+
+	reciveUsrMsg
+	reciveRoomMsg
+
+Commandes :
+	name func	cmd	-> to serv opcode
+
+	register 	crea		100001
+	login		auth 		100002
+	setPassPhrase	pass 		100003
+	createRoom	crms		100004
+	joinRoom	jrms 		100005
+	sendMsgRoom	srms 		100006
+	joinMp		jmpu  		100007
+	sendMsgMp	smpu  		100008
+
+
+Commandes :
+	name func	cmd		opcode?
+
+	connected	cnnt		10001
+	reciveUsrMsg    rvum            10002
+	reciveRoomMsg   rvrm            10003
+
+
+Réponses :
+	name func			
+
+	registerResponse	 	
+	loginResponse		 	
+	passPhraseResponse	 	
+	createRoomResponse	 	
+	joinRoomResponse	 	
+	sendMsgRoomsResponse	 	
+	joinMpResponse			
+	clientAcceptMp			
+	sendmsgMpResponse	 	
+
+
+MP: (client)
+Paire de clés asymétriques :
+	Clé privée chez le client
+	Clé publique dans le serveur
+
+Le client se connecte à un autre utilisateur en utilisant son identifiant, par exemple : @user23.
+
+Les messages sont éphémères, disparaissant une heure après réception (ou lecture par le client).
+
+Les messages envoyés à des clients déconnectés sont stockés sur le serveur, chiffrés avec la clé privée du client en question, et sont envoyés lorsque le client se reconnecte.
+Lorsqu'un client veut se connecter à un autre, il envoie d'abord une demande ; si elle est acceptée, il fournit la clé publique du client et reçoit celle de l'autre pour permettre la communication.
+
